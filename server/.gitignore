@@ -1,0 +1,40 @@
+
+# Ignore node_modules folder
+/node_modules
+
+# Ignore logs folder
+/logs
+
+# Ignore os specific files
+.DS_Store
+._*
+Thumbs.db
+ehthumbs.db
+TheVolumeSettings.xml
+
+# Ignore Visual Studio Code folder
+.vscode
+
+# Ignore Sublime Text project and workspace files
+*.sublime-project
+*.sublime-workspace
+
+# Ignore Mac OS files
+*.swp
+*.lock
+.profile
+Tmp
+
+# Ignore vim temporary files
+*.swp
+*.swo
+
+# Ignore brunch skeleton
+bower_components
+build
+app/assets/vendor
+app/assets/js/vendor
+app/assets/scss/vendor
+
+# Ignore config.env file
+config/config.env
