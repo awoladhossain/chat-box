@@ -5,6 +5,7 @@ import express from "express";
 import fileUpload from "express-fileupload";
 import connectDB from "./database/db.js";
 import userRouter from "./routes/user.routes.js";
+import useMessageRouter from "./routes/message.routes.js";
 
 config({ path: "./config/config.env" });
 const app = express();
@@ -29,5 +30,6 @@ app.use(
 connectDB();
 
 app.use("/api/v1/users", userRouter);
+app.use("/api/v1/messages", useMessageRouter);
 
 export default app;

@@ -110,7 +110,7 @@ export const getUser = catchAsyncErrors(async (req, res, next) => {
 });
 export const updateProfile = catchAsyncErrors(async (req, res, next) => {
   const { fullName, email } = req.body;
-  if (fullName.trim().length === 0 || email.trim().length === 0) {
+  if (fullName?.trim().length === 0 || email?.trim().length === 0) {
     return res.status(400).json({
       success: false,
       message: "All fields are required",
