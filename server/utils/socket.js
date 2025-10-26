@@ -7,6 +7,9 @@ export function initSocket(server) {
   io = new Server(server, {
     cors: {
       origin: [process.env.CLIENT_URL],
+      credentials: true,
+      allowedHeaders:['Content-Type', 'Authorization'],
+      methods: ["GET", "POST", "PUT", "DELETE"],
     },
   });
   io.on("connection", (socket) => {
@@ -15,7 +18,7 @@ export function initSocket(server) {
     if (userId) {
       userSocketMap[userId] = socket.id;
     }
-    // * emit means 
+    // * emit means
     io.emit("getOnlineUsers", Object.keys(userSocketMap));
 
     socket.on("disconnect", () => {

@@ -58,7 +58,7 @@ export const signin = catchAsyncErrors(async (req, res, next) => {
   if (!emailRgex.test(email)) {
     return res.status(400).json({
       success: false,
-      message: "Invalid email",
+      message: "Please enter a valid email",
     });
   }
   if (password.length < 6) {
@@ -85,6 +85,7 @@ export const signin = catchAsyncErrors(async (req, res, next) => {
   }
 
   generateToken(user, "User signed in successfully", 200, res);
+
 });
 export const signout = catchAsyncErrors(async (req, res, next) => {
   res

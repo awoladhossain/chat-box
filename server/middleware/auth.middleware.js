@@ -10,7 +10,7 @@ export const isAuthenticated = catchAsyncErrors(async (req, res, next) => {
       message: "Please login to access this resource",
     });
   }
-  const decoded = jwt.verify(token, process.env.JWT_SECRT_KEY);
+  const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
   if (!decoded) {
     return res.status(401).json({
       success: false,
@@ -19,7 +19,7 @@ export const isAuthenticated = catchAsyncErrors(async (req, res, next) => {
   }
 
   // * this id is user id when we create token with user id in the payload in jwtToken.js file
-  const user = await User.findById(decoded.id);
+  const user = await User.findById(decoded.id).select("-password");
   req.user = user;
   next();
 });
