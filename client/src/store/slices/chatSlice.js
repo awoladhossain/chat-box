@@ -20,6 +20,7 @@ const initialState = {
   selectedUser: null,
   isUsersLoading: false,
   isMessagesLoading: false,
+  
 };
 export const chatSlice = createSlice({
   name: "chat",

@@ -1,14 +1,15 @@
 import { axiosInstance } from "@/lib/axios";
-import { connectSocket, disconnectSocket } from "@/lib/socket";
+// import { connectSocket, disconnectSocket } from "@/lib/socket";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { toast } from "react-toastify";
+
 export const getUser = createAsyncThunk("user/getUser", async (_, thunkAPI) => {
   try {
     const res = await axiosInstance.get("/users/get-user");
-    if (res.data.user) {
-      // Guard: Only connect if user exists
-      connectSocket(res.data.user._id); // Pass _id (string)
-    }
+    // if (res.data.user) {
+    //   // Guard: Only connect if user exists
+    //   connectSocket(res.data.user._id); // Pass _id (string)
+    // }
     return res.data.user;
   } catch (error) {
     console.log("error while fatching user: ", error);
@@ -23,7 +24,7 @@ export const logoutUser = createAsyncThunk(
   async (_, thunkAPI) => {
     try {
       await axiosInstance.get("/users/sign-out");
-      disconnectSocket();
+      // disconnectSocket();
       return null;
     } catch (error) {
       console.log(error);
@@ -37,8 +38,8 @@ export const loginUser = createAsyncThunk(
   async (data, thunkAPI) => {
     try {
       const res = await axiosInstance.post("/users/sign-in", data);
-      console.log(res?.data.user._id);
-      connectSocket(res?.data.user._id);
+      // console.log(res?.data.user._id);
+      // connectSocket(res?.data.user._id);
       toast.success("Login successful");
       return res.data.user;
     } catch (error) {
@@ -53,8 +54,8 @@ export const registerUser = createAsyncThunk(
   async (data, thunkAPI) => {
     try {
       const res = await axiosInstance.post("/users/sign-up", data);
-      connectSocket(res?.data.user._id);
-      toast.success("Registration successful");
+      // connectSocket(res?.data.user._id);
+      // toast.success("Registration successful");
       return res.data.user;
     } catch (error) {
       console.log(error);

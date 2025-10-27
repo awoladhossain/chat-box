@@ -19,18 +19,24 @@ import { getUser, setOnlineUsers } from "./store/slices/authSlice";
 const App = () => {
   const { authUser, isCheckingAuth } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
+
   useEffect(() => {
     dispatch(getUser());
-  }, []);
+  }, [dispatch]);
+
   useEffect(() => {
     if (authUser) {
       const socket = connectSocket(authUser._id);
       socket.on("getOnlineUsers", (onlineUsers) => {
+        console.log("Online users received:", onlineUsers);
         dispatch(setOnlineUsers(onlineUsers));
       });
+
       return () => {
         disconnectSocket();
       };
+    } else {
+      disconnectSocket();
     }
   }, [authUser, dispatch]);
 
@@ -41,6 +47,7 @@ const App = () => {
       </div>
     );
   }
+
   return (
     <Router>
       <Navbar />
