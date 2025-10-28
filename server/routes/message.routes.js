@@ -5,7 +5,7 @@ import { getAllUsers, getMessages, sendMessage } from "../controllers/message.co
 const router = express.Router();
 
 router.get("/users",isAuthenticated,getAllUsers);
-router.get("/messages/:id",isAuthenticated,getMessages);
+router.get("/user-messages/:id",isAuthenticated,getMessages);
 router.post("/sends/:id",isAuthenticated,sendMessage);
 
 export default router
