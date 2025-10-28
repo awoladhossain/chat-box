@@ -12,15 +12,28 @@ export const getUsers = createAsyncThunk(
       toast.error(error.response?.data.message);
       return thunkAPI.rejectWithValue(error.response?.data.message);
     }
-  }
+  },
 );
+export const getMessages = createAsyncThunk(
+  "chat/getMessages",
+  async (userId, thunkAPI) => {
+    try {
+      const res = await axiosInstance.get(`/messages/user-messages/${userId}`);
+      return res.data.messages;
+    } catch (error) {
+      console.log(error);
+      toast.error(error.response?.data.message);
+      return thunkAPI.rejectWithValue(error.response?.data.message);
+    }
+  },
+);
+
 const initialState = {
-  messsages: [],
+  messages: [],
   users: [],
   selectedUser: null,
   isUsersLoading: false,
   isMessagesLoading: false,
-  
 };
 export const chatSlice = createSlice({
   name: "chat",
@@ -30,7 +43,7 @@ export const chatSlice = createSlice({
       state.selectedUser = action.payload;
     },
     pushNewMessage: (state, action) => {
-      state.messsages.push(action.payload);
+      state.messages.push(action.payload);
     },
   },
   extraReducers: (builder) => {
@@ -44,6 +57,16 @@ export const chatSlice = createSlice({
       })
       .addCase(getUsers.rejected, (state) => {
         state.isUsersLoading = false;
+      })
+      .addCase(getMessages.pending, (state) => {
+        state.isMessagesLoading = true;
+      })
+      .addCase(getMessages.fulfilled, (state, action) => {
+        state.messages = action.payload.messages;
+        state.isMessagesLoading = false;
+      })
+      .addCase(getMessages.rejected, (state) => {
+        state.isMessagesLoading = false;
       });
   },
 });
