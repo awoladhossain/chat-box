@@ -12,20 +12,43 @@ export const getUsers = createAsyncThunk(
       toast.error(error.response?.data.message);
       return thunkAPI.rejectWithValue(error.response?.data.message);
     }
-  },
+  }
 );
+
 export const getMessages = createAsyncThunk(
   "chat/getMessages",
   async (userId, thunkAPI) => {
     try {
       const res = await axiosInstance.get(`/messages/user-messages/${userId}`);
-      return res.data.messages;
+      return { userId, messages: res.data.messages };
     } catch (error) {
-      console.log(error);
       toast.error(error.response?.data.message);
       return thunkAPI.rejectWithValue(error.response?.data.message);
     }
-  },
+  }
+);
+
+// ✅ Updated sendMessage to accept { data, receiverId }
+export const sendMessage = createAsyncThunk(
+  "chat/sendMessage",
+  async ({ data, receiverId }, thunkAPI) => {
+    try {
+      const res = await axiosInstance.post(
+        `/messages/sends/${receiverId}`,
+        data,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+
+      return res.data.message;
+    } catch (error) {
+      toast.error(error.response?.data.message);
+      return thunkAPI.rejectWithValue(error.response?.data.message);
+    }
+  }
 );
 
 const initialState = {
@@ -35,6 +58,7 @@ const initialState = {
   isUsersLoading: false,
   isMessagesLoading: false,
 };
+
 export const chatSlice = createSlice({
   name: "chat",
   initialState,
@@ -43,6 +67,7 @@ export const chatSlice = createSlice({
       state.selectedUser = action.payload;
     },
     pushNewMessage: (state, action) => {
+      state.messages ??= [];
       state.messages.push(action.payload);
     },
   },
@@ -67,6 +92,10 @@ export const chatSlice = createSlice({
       })
       .addCase(getMessages.rejected, (state) => {
         state.isMessagesLoading = false;
+      })
+      .addCase(sendMessage.fulfilled, (state, action) => {
+        state.messages ??= [];
+        state.messages.push(action.payload);
       });
   },
 });
