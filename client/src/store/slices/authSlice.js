@@ -64,6 +64,20 @@ export const registerUser = createAsyncThunk(
     }
   }
 );
+export const updateProfile = createAsyncThunk(
+  "users/update-profile",
+  async (data, thunkAPI) => {
+    try {
+      const res = await axiosInstance.put("/users/update-profile", data);
+      toast.success("Profile updated successfully");
+      return res.data.user;
+    } catch (error) {
+      console.log(error);
+      console.error(error.response?.data.message);
+      return thunkAPI.rejectWithValue(error.response?.data.message);
+    }
+  }
+);
 
 const initialState = {
   authUser: null,
@@ -119,6 +133,16 @@ const authSlice = createSlice({
       .addCase(registerUser.rejected, (state, action) => {
         state.isSigningUp = false;
         toast.error(action.payload || "Registration failed");
+      })
+      .addCase(updateProfile.pending, (state) => {
+        state.isUpdatingProfile = true;
+      })
+      .addCase(updateProfile.fulfilled, (state, action) => {
+        state.authUser = action.payload;
+        state.isUpdatingProfile = false;
+      })
+      .addCase(updateProfile.rejected, (state) => {
+        state.isUpdatingProfile = false;
       });
   },
 });
