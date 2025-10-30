@@ -17,7 +17,7 @@ const NoChatSelected = () => {
           </div>
         </div>
         <h2 className="text-2xl font-bold text-foreground">
-          Welcome to Talkie!
+          Welcome to Chit-Chat!
         </h2>{" "}
         {/* Swapped text-gray-800 */}
         <p className="text-muted-foreground">
