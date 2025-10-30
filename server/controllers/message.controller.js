@@ -37,9 +37,9 @@ export const getMessages = catchAsyncErrors(async (req, res, next) => {
 });
 export const sendMessage = catchAsyncErrors(async (req, res, next) => {
   const { text } = req.body;
-  const media = req?.file?.media;
   const { id: receiverId } = req.params;
   const senderId = req.user._id;
+
   const receiver = await User.findById(receiverId);
   if (!receiver) {
     return res.status(404).json({
@@ -47,25 +47,29 @@ export const sendMessage = catchAsyncErrors(async (req, res, next) => {
       message: "Receiver ID not found",
     });
   }
+
   const sanitizedText = text?.trim() || "";
-  if (!sanitizedText && !media) {
+  const mediaFile = req.files?.media; // ✅ fixed: get file from express-fileupload
+
+  if (!sanitizedText && !mediaFile) {
     return res.status(400).json({
       success: false,
       message: "Message or media is required",
     });
   }
+
   let mediaUrl = "";
-  if (media) {
+  if (mediaFile) {
     try {
       const uploadResponse = await cloudinary.uploader.upload(
-        media.tempFilePath,
+        mediaFile.tempFilePath,
         {
-          resource_type: "auto", //* resource_type: video, image, raw, auto
+          resource_type: "auto", // auto, video, image, raw
           folder: "CHAT_APP_MEDIA",
           transformation: [
             {
               width: 1080,
-              heigth: 1080,
+              height: 1080, // fixed typo: heigth → height
               crop: "limit",
             },
             {
@@ -77,27 +81,31 @@ export const sendMessage = catchAsyncErrors(async (req, res, next) => {
           ],
         }
       );
-      mediaUrl = uploadResponse?.secure_url;
+      mediaUrl = uploadResponse.secure_url;
     } catch (error) {
-      console.log("Error while uploading media from message");
+      console.log("Error while uploading media from message", error);
       return res.status(500).json({
         success: false,
         message: "Error while uploading media from message",
       });
     }
   }
+
   const newMessage = await Message.create({
     senderId,
     receiverId,
     text: sanitizedText,
     media: mediaUrl,
   });
+
   const receiverSocketId = getReceiverSocket(receiverId);
   if (receiverSocketId) {
     io.to(receiverSocketId).emit("newMessage", newMessage);
   }
+
   res.status(201).json({
     success: true,
     message: newMessage,
   });
 });
+
